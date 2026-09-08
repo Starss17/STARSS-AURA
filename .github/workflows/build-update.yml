@@ -4,8 +4,8 @@ on:
   push:
     branches: [main]
     paths:
-      - 'build/**'
-      - 'go.mod'
+      - 'build/v060.part.00'
+      - 'build/v060.part.01'
       - '.github/workflows/build-update.yml'
   workflow_dispatch:
 
@@ -24,12 +24,15 @@ jobs:
         with:
           go-version: '1.23.x'
 
-      - name: Reconstruct source
+      - name: Reconstruct v0.6 project
         shell: bash
         run: |
-          cat build/source.part.* | base64 -d | gzip -d > main.go
+          rm -rf web main.go platform_windows.go platform_linux.go
+          cat build/v060.part.00 build/v060.part.01 | base64 -d | tar -xz
           test -s main.go
-          grep -q 'appVersion = "0.5.0"' main.go
+          test -s platform_windows.go
+          test -s web/index.html
+          grep -q 'appVersion  = "0.6.0"' main.go
 
       - name: Build Windows EXE
         shell: bash
@@ -51,7 +54,7 @@ jobs:
             "version": "$VERSION",
             "url": "https://raw.githubusercontent.com/Starss17/STARSS-AURA/main/STARSS_AURA.exe",
             "sha256": "$SHA",
-            "notes": "Valorant real via Riot Client local, Riot ID Starss#MGBAY configurável, overlay de rank no estilo do antigo Live Tracker, popup de atualização e facas somente em modo preview."
+            "notes": "v0.6: interface refeita sem flicker, botões reais, tracker pelo Riot Client local sem dados fake, overlay reconstruída e facas somente em preview."
           }
           EOF
 
