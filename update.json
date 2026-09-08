@@ -1,6 +1,6 @@
 {
-  "version": "0.5.0",
+  "version": "0.6.0",
   "url": "https://raw.githubusercontent.com/Starss17/STARSS-AURA/main/STARSS_AURA.exe",
-  "sha256": "e2561e2ed0bff36bf009ca93b317397d5b20c1863277e00d558a9225baca2421",
-  "notes": "Valorant real via Riot Client local, Riot ID Starss#MGBAY configurável, overlay de rank no estilo do antigo Live Tracker, popup de atualização e facas somente em modo preview."
+  "sha256": "38f37e130dd299ad6ef146ab7c3899a9c655eb95c06fffd81afa82bb39f17e66",
+  "notes": "v0.6: interface refeita sem flicker, botões reais, tracker pelo Riot Client local sem dados fake, overlay reconstruída e facas somente em preview."
 }
