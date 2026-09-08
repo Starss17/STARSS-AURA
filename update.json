@@ -1,6 +1,6 @@
 {
-  "version": "0.6.0",
+  "version": "0.6.1",
   "url": "https://raw.githubusercontent.com/Starss17/STARSS-AURA/main/STARSS_AURA.exe",
-  "sha256": "38f37e130dd299ad6ef146ab7c3899a9c655eb95c06fffd81afa82bb39f17e66",
-  "notes": "v0.6: interface refeita sem flicker, botões reais, tracker pelo Riot Client local sem dados fake, overlay reconstruída e facas somente em preview."
+  "sha256": "c29b36e11eaeb608eb65092dfb0934a97575ec2216c47ba7c4f1121a736f13dc",
+  "notes": "v0.6.1: base sem flicker; botões HTML reais; tracker Riot local sem dados fake; Brasil roteado corretamente pelo shard NA; Riot ID padrão Starss#MGBAY; overlay reconstruída; facas somente preview."
 }
