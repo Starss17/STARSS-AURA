@@ -4,7 +4,6 @@ on:
   push:
     branches: [main]
     paths:
-      - 'build/v061x.part.*'
       - '.github/workflows/build-update.yml'
   workflow_dispatch:
 
@@ -18,66 +17,24 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: '1.23.x'
-          cache: false
-
-      - name: Reconstruct v0.6.1 project
+      - name: Reconstruct known-good v0.6 source
         shell: bash
         run: |
           set -euo pipefail
           rm -rf web main.go platform_windows.go platform_linux.go
-          shopt -s nullglob
-          parts=(build/v061x.part.*)
-          echo "Found ${#parts[@]} payload parts"
-          test "${#parts[@]}" -eq 6
-          cat "${parts[@]}" | tr -d '\r\n\t ' | base64 -d | tar -xz
+          cat build/v060.part.00 build/v060.part.01 | base64 -d | tar -xz
           test -s main.go
           test -s platform_windows.go
           test -s web/index.html
-          grep -q 'appVersion  = "0.6.1"' main.go
-          grep -q 'Starss#MGBAY' web/index.html
+          grep -q 'appVersion  = "0.6.0"' main.go
 
-      - name: Build Windows EXE
-        shell: bash
-        env:
-          GOOS: windows
-          GOARCH: amd64
-          CGO_ENABLED: '0'
-        run: |
-          set -euo pipefail
-          go build -trimpath -ldflags='-H=windowsgui -s -w' -o STARSS_AURA.exe .
-          test -s STARSS_AURA.exe
-
-      - name: Generate update manifest
+      - name: Inspect Valorant region routing
         shell: bash
         run: |
-          set -euo pipefail
-          SHA="$(sha256sum STARSS_AURA.exe | awk '{print $1}')"
-          VERSION="$(grep -oP 'appVersion\s*=\s*"\K[^"]+' main.go | head -1)"
-          cat > update.json <<EOF
-          {
-            "version": "$VERSION",
-            "url": "https://raw.githubusercontent.com/Starss17/STARSS-AURA/main/STARSS_AURA.exe",
-            "sha256": "$SHA",
-            "notes": "v0.6.1: base refeita sem flicker; botões HTML reais; tracker Riot local sem dados fake; região BR corrigida para shard NA; overlay reconstruída; facas somente preview; Riot ID padrão Starss#MGBAY."
-          }
-          EOF
-          cat update.json
-
-      - name: Publish EXE and manifest
-        shell: bash
-        run: |
-          set -euo pipefail
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add -f STARSS_AURA.exe update.json
-          if git diff --cached --quiet; then
-            echo 'Nothing to publish.'
-            exit 0
-          fi
-          VERSION="$(grep -oP 'appVersion\s*=\s*"\K[^"]+' main.go | head -1)"
-          git commit -m "Publish STARSS AURA v${VERSION}"
-          git push
+          echo '--- platform_windows.go ---'
+          grep -nEi 'br1|latam|americas|shard|region|pd\.' platform_windows.go || true
+          echo '--- main.go ---'
+          grep -nEi 'br1|latam|americas|shard|region|pd\.' main.go || true
+          echo '--- web/index.html ---'
+          grep -nEi 'br1|latam|americas|shard|region|pd\.' web/index.html || true
+          exit 1
